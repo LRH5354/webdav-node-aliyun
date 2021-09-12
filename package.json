@@ -1,0 +1,22 @@
+{
+  "name": "webdav-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "aliyun":"node aliyun.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@webdav-server/dropbox": "^1.0.2",
+    "@webdav-server/ftp": "^1.0.3",
+    "@webdav-server/github": "^1.0.1",
+    "@webdav-server/http": "^1.0.2",
+    "@webdav-server/javascript": "^1.1.0",
+    "@webdav-server/virtual-stored": "^1.0.3",
+    "axios": "^0.21.4",
+    "webdav-server": "^2.6.2"
+  }
+}
