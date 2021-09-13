@@ -27,7 +27,7 @@ async function FileInfo(boxid,file_id,parentpath){
     }
     let resBody = await request.post(apiurl,JSON.stringify(postData))
     if(resBody.status != 200||!resBody.data){
-        throw `获取文件信息失败！！`
+        return {"code":503,"message":"获取文件信息失败！！"}
     }
     return resBody.data
 }
@@ -43,12 +43,12 @@ async function CreatForder(boxid,parentid,name){
     let resBody = await request.post(apiurl,JSON.stringify(postData))
     let resBodyParse = JSON.parse(resBody)
     if(resBodyParse.code != 201||resBodyParse.file_id<20){
-        return {"code":503,"message":"创建文件失败"}
+        return {"code":503,"message":"创建文件夹失败"}
     }
     return resBodyParse
 }
 
-async function rename(boxid,file_id,name){
+async function Rename(boxid,file_id,name){
     let apiurl = "https://api.aliyundrive.com/v2/file/update"
     let postData = {
         drive_id:boxid,
@@ -84,6 +84,6 @@ module.exports={
     FileList,
     FileInfo,
     CreatForder,
-    rename,
+    Rename,
     TrashBatch
 }
