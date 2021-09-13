@@ -64,7 +64,30 @@ async function Rename(boxid,file_id,name){
     return resBodyParse 
 }
 
-async function TrashBatch(boxid,filelist,){
+/**
+ * 自定义获取下载链接的有效时长
+ * @param {*} boxid
+ * @param {*} file_id
+ * @param {*} expire_sec
+ */
+async function FiledownloadUrl (boxid,file_id,expire_sec){
+    let apiurl = "https://api.aliyundrive.com/v2/file/get_download_url"
+    let postData = {
+        drive_id: boxid,
+		file_id:  file_id,
+		expire_sec: expire_sec,
+    }
+    let resBody = await request.post(apiurl,JSON.stringify(postData))
+    if(resBody.status == 401){
+        return {"code":401,"message":"资源未授权"}
+    }
+    if(resBody.status != 200||!resBody.data){
+        return {"code":503,"message":"获取文件信息失败！！"}
+    }
+    return resBody.data
+}
+
+async function TrashBatch(boxid,filelist){
     let apiurl = "https://api.aliyundrive.com/v2/file/update"
     let postData = {
         drive_id:boxid,
@@ -85,5 +108,6 @@ module.exports={
     FileInfo,
     CreatForder,
     Rename,
-    TrashBatch
+    TrashBatch,
+    FiledownloadUrl
 }

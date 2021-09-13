@@ -146,15 +146,15 @@ var AliyunFileSystem = (function (_super) {
         });
     };;
     AliyunFileSystem.prototype._openReadStream = function (path, ctx, callback) {
-        // this.dbx.filesDownload({
-        //     path: this.getRemotePath(path)
-        // }).then(function (r) {
-        //     var stream = new webdav_server_1.v2.VirtualFileReadable([r.fileBinary]);
-        //     callback(undefined, stream);
-        // }).catch(function (e) {
-        //     callback(webdav_server_1.v2.Errors.ResourceNotFound);
-        // });
-        callback(webdav_server_1.v2.Errors.ResourceNotFound);
+        this.alidb.FileDownload({
+            path: this.getRemotePath(path)
+        }).then(function (data) {
+            var stream =  new webdav_server_1.v2.VirtualFileReadable([data]);
+            callback(undefined, stream);
+        }).catch(function (e) {
+            callback(webdav_server_1.v2.Errors.ResourceNotFound);
+        });
+    
     };;
     AliyunFileSystem.prototype._size = function (path, ctx, callback) {
         var _this = this;

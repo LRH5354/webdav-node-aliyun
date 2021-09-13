@@ -1,7 +1,8 @@
 var cache = require('memory-cache')
 var webdav_server_1 = require("webdav-server");
 var {ApiTokenLogin} = require("../api/login") 
-var {FileList,FileInfo} = require("../api/apiFile")
+var {FileList,FileInfo,FiledownloadUrl} = require("../api/apiFile")
+var {createStream} = require('../api/util')
 var {GetUserBoxID} = require("../api/user")
 
 // 设置缓存 key value time（ms） callback
@@ -39,9 +40,9 @@ function AliyunClient(refleshToken){
 AliyunClient.prototype.FileInfo = function ({boxid,path}){
     var boxid = boxid || GetUserBoxID()
     var file_id = this.getFileIdByPath(path)
-    return new Promise((resove,reject)=>{
+    return new Promise((reslove,reject)=>{
         FileInfo(boxid,file_id).then(data=>{
-            resove(data)
+            reslove(data)
         }).catch(err=>{
             reject(err)
         })
@@ -66,9 +67,6 @@ AliyunClient.prototype.FileList = function ({boxid,path}) {
     var boxid = boxid || GetUserBoxID()
     var parentid = this.getFileIdByPath(path)
     // 存储根目录
-    if(this.resources.get(path) && this.resources.get(path)['.tag']=='file'){
-        debugger
-    }
     if(path == "" || path =="/") {
         this.resources.put('/', {  
                                    '.tag': 'folder',
@@ -77,7 +75,7 @@ AliyunClient.prototype.FileList = function ({boxid,path}) {
                                     "metadata":{}
                                 })
     }
-    return new Promise((resove,reject)=>{
+    return new Promise((reslove,reject)=>{
         FileList(boxid,parentid,undefined).then((filelist)=>{
              filelist.items.forEach(item => {
                 let pathKey = path + "/" + item.name
@@ -89,11 +87,29 @@ AliyunClient.prototype.FileList = function ({boxid,path}) {
                 }
                 this.resources.put(pathKey,fileCache)
              });
-             resove(filelist.items)
+             reslove(filelist.items)
         }).catch(err=>{
             reject(err)
         })
     })
+
+ }
+
+ AliyunClient.prototype.FileDownload = function({boxid,path}){
+    var boxid = boxid || GetUserBoxID()
+    var file_id = this.getFileIdByPath(path)
+    return new Promise((reslove,reject)=>{
+        FiledownloadUrl(boxid,file_id,60*60*3).then(({url,size})=>{
+            createStream(url).then(data=>{
+                reslove(data)
+            }).catch(err=>{
+                reject(err)
+            })
+        })
+    })
+ }
+
+ AliyunClient.prototype.createDownLoadStream = function(url){
 
  }
 
