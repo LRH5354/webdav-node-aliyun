@@ -156,9 +156,6 @@ var AliyunFileSystem = (function (_super) {
 
             console.log(headers)
             var stream = data
-                stream.on( 'data' ,(chunk)=>{
-                    //   console.log('get data',chunk)
-                })
                 stream.on( 'end' ,()=>{
                     console.log('end')
                     // stream.pause()
@@ -166,9 +163,6 @@ var AliyunFileSystem = (function (_super) {
                 stream.on('close', (stream) => {
                     console.log('someone closed!');
                     // stream.pause()
-                });
-                stream.on('error', (stream) => {
-                    console.log('someone error!');
                 });
             callback(undefined, stream);
         }).catch(function (e) {

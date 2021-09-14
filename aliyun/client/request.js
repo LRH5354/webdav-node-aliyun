@@ -9,7 +9,7 @@ const instance = axios.create({
     config => {
       // 复写请求配置，添加Authorization请求头
       Object.assign(config.headers,getAuthorization()) 
-      console.log("request请求：", `${config.url}  ${config.method}  ${config.data}`)
+      console.log("request请求：", `${config.url}  ${config.method}  ${config.data} ${ JSON.stringify(config.headers) }`)
       return config
     },
     error => {

@@ -101,9 +101,9 @@ AliyunClient.prototype.FileList = function ({boxid,path}) {
     var range = headers&&headers.range
     return new Promise((reslove,reject)=>{
         FiledownloadUrl(boxid,file_id,60*60*3).then(({url,size})=>{
-            createStream(url,range).then(data=>{
-                if(data.code&&data.code == 503){
-                    console.log("创建读写流失败！！！")
+            createStream(url,range,size).then(data=>{
+                if(data.code &&data.code == 503){
+                   reject("创建读写流失败！！！")
                 }
                 reslove(data)
             }).catch(err=>{
