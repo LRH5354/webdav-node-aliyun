@@ -92,7 +92,7 @@ async function TrashBatch(boxid,filelist){
     let postData = {
         drive_id:boxid,
         file_id:file_id,
-        naem:name,
+        name:name,
         check_name_mode:'refuse',
     }
     let resBody = await request.post(apiurl,JSON.stringify(postData))

@@ -95,12 +95,16 @@ AliyunClient.prototype.FileList = function ({boxid,path}) {
 
  }
 
- AliyunClient.prototype.FileDownload = function({boxid,path}){
+ AliyunClient.prototype.FileDownload = function({boxid,path,headers}){
     var boxid = boxid || GetUserBoxID()
     var file_id = this.getFileIdByPath(path)
+    var range = headers&&headers.range
     return new Promise((reslove,reject)=>{
         FiledownloadUrl(boxid,file_id,60*60*3).then(({url,size})=>{
-            createStream(url).then(data=>{
+            createStream(url,range).then(data=>{
+                if(data.code&&data.code == 503){
+                    console.log("创建读写流失败！！！")
+                }
                 reslove(data)
             }).catch(err=>{
                 reject(err)
