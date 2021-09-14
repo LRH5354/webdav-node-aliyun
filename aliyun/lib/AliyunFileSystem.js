@@ -156,14 +156,14 @@ var AliyunFileSystem = (function (_super) {
 
             console.log(headers)
             var stream = data
-                stream.on( 'end' ,()=>{
-                    console.log('end')
-                    // stream.pause()
-                })
-                stream.on('close', (stream) => {
-                    console.log('someone closed!');
-                    // stream.pause()
-                });
+                // stream.on( 'end' ,()=>{
+                //     console.log('end')
+                //     // stream.pause()
+                // })
+                // stream.on('close', (stream) => {
+                //     console.log('someone closed!');
+                //     // stream.pause()
+                // });
             callback(undefined, stream);
         }).catch(function (e) {
             callback(webdav_server_1.v2.Errors.ResourceNotFound);

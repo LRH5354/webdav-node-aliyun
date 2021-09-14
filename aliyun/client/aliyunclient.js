@@ -14,6 +14,7 @@ function AliyunClient(refleshToken){
     this.refleshToken = refleshToken
     this.isLogined = false
     this.resources= new cache.Cache();
+    this.streamCache = {}
     // Aliyun 登录测试
     ApiTokenLogin(refleshToken).then(()=>{
         this.isLogined = true
@@ -99,22 +100,22 @@ AliyunClient.prototype.FileList = function ({boxid,path}) {
     var boxid = boxid || GetUserBoxID()
     var file_id = this.getFileIdByPath(path)
     var range = headers&&headers.range
+    if(this.streamCache[path]){
+       return Promise.resolve(this.streamCache[path])
+    }
     return new Promise((reslove,reject)=>{
         FiledownloadUrl(boxid,file_id,60*60*3).then(({url,size})=>{
             createStream(url,range,size).then(data=>{
                 if(data.code &&data.code == 503){
                    reject("创建读写流失败！！！")
                 }
+                this.streamCache[path] = data
                 reslove(data)
             }).catch(err=>{
                 reject(err)
             })
         })
     })
- }
-
- AliyunClient.prototype.createDownLoadStream = function(url){
-
  }
 
  AliyunClient.prototype.getFileIdByPath = function(path){
