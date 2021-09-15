@@ -3,10 +3,11 @@ const aliyun = require('./aliyun/lib/exports');
 
 const server = new webdav.WebDAVServer({
     // [...]
+    hostname:'localhost',
     autoLoad: {
         // [...]
         serializers: [
-            new aliyun.AliyunSerializer()
+            // new aliyun.AliyunSerializer()
             // [...]
         ]
     }

@@ -40,7 +40,7 @@ function AliyunClient(refleshToken){
   */
 AliyunClient.prototype.FileInfo = function ({boxid,path}){
     var boxid = boxid || GetUserBoxID()
-    var file_id = this.getFileIdByPath(path)
+    var file_id = this.getFileIdByPath(path) || root
     return new Promise((reslove,reject)=>{
         FileInfo(boxid,file_id).then(data=>{
             reslove(data)
@@ -66,7 +66,7 @@ AliyunClient.prototype.FileInfo = function ({boxid,path}){
 */
 AliyunClient.prototype.FileList = function ({boxid,path}) { 
     var boxid = boxid || GetUserBoxID()
-    var parentid = this.getFileIdByPath(path)
+    var parentid = this.getFileIdByPath(path) || 'root'
     // 存储根目录
     if(path == "" || path =="/") {
         this.resources.put('/', {  
@@ -77,6 +77,7 @@ AliyunClient.prototype.FileList = function ({boxid,path}) {
                                 })
     }
     return new Promise((reslove,reject)=>{
+       
         FileList(boxid,parentid,undefined).then((filelist)=>{
              filelist.items.forEach(item => {
                 let pathKey = path + "/" + item.name
@@ -99,17 +100,25 @@ AliyunClient.prototype.FileList = function ({boxid,path}) {
  AliyunClient.prototype.FileDownload = function({boxid,path,headers}){
     var boxid = boxid || GetUserBoxID()
     var file_id = this.getFileIdByPath(path)
-    var range = headers&&headers.range
-    if(this.streamCache[path]){
-       return Promise.resolve(this.streamCache[path])
-    }
+    var range = headers && headers.range
+    var streamId = path+'_'+range
     return new Promise((reslove,reject)=>{
+        console.log(streamId)
+        if(this.streamCache[streamId]){
+            console.log('命中缓存!!')
+            // console.log(streamId, this.streamCache[streamId])
+            reslove(this.streamCache[streamId])
+            return 
+        }
+
+        console.log(this.resources.get(path))
         FiledownloadUrl(boxid,file_id,60*60*3).then(({url,size})=>{
             createStream(url,range,size).then(data=>{
                 if(data.code &&data.code == 503){
                    reject("创建读写流失败！！！")
+                   return
                 }
-                this.streamCache[path] = data
+                this.streamCache[streamId] = data
                 reslove(data)
             }).catch(err=>{
                 reject(err)

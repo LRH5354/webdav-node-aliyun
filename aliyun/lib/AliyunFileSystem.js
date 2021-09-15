@@ -28,6 +28,7 @@ var AliyunSerializer_1 = require("./AliyunSerializer");
 var webdav_server_1 = require("webdav-server");
 var aliyun_client_1 = require("../client/aliyunclient");
 const { start } = require("webdav-server/lib/server/v1/webDAVServer/StartStop");
+const through = require('through');
 
 var AliyunFileSystem = (function (_super) {
     __extends(AliyunFileSystem, _super);
@@ -148,23 +149,14 @@ var AliyunFileSystem = (function (_super) {
     };;
     AliyunFileSystem.prototype._openReadStream = function (path, ctx, callback) {
         var headers = ctx.context.request.headers
-        
         this.alidb.FileDownload({
             path: this.getRemotePath(path),
             headers
         }).then(function (data) {
-
-            console.log(headers)
             var stream = data
-                // stream.on( 'end' ,()=>{
-                //     console.log('end')
-                //     // stream.pause()
-                // })
-                // stream.on('close', (stream) => {
-                //     console.log('someone closed!');
-                //     // stream.pause()
-                // });
-            callback(undefined, stream);
+            var readstream = through();
+
+            callback(null, data);
         }).catch(function (e) {
             callback(webdav_server_1.v2.Errors.ResourceNotFound);
         });
